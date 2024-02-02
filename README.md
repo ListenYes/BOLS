@@ -1,3 +1,2 @@
 # BOLS
-hhhhhh
-abccccc
+code of BOLS algorithm
