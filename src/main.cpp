@@ -1,4 +1,3 @@
-// test on  no_impr_max and no_update_max
 
 #include <cstring>
 #include "multi_objective.hpp"
@@ -7,23 +6,33 @@ int main(int argc, char** argv) {
     util::setRandom(DEFAULT_RANDOM_SEED);
     TimePoint start_time = util::getTimePoint();
 
+    double time_limit = 100;
+    cout << "time limit: " << time_limit << endl;
+    time_limit = atoi(argv[3]) * 0.9 - 3;
+
+    long long no_update1 = 0;
+    long long no_update2 = 0;
+    long long no_update_max1 = 10;
+    long long no_update_max2 = 10;
+    if (argc >= 6) {
+        no_update_max1 = atoi(argv[4]);
+        no_update_max2 = atoi(argv[5]);
+    }
+
+    
+    cout << "parameter: " << no_update_max1 << " " << no_update_max2 << endl;
+
 
     MultiObjectiveData multi_data;
     multi_data.readDemandFile(argv[1]);
     multi_data.readSampleFile(argv[2]); 
     
-    double time_limit = 100;
-    time_limit = atoi(argv[3]) * 0.9 - 3;
+
     
 
     multi_data.coonstruct_query();
     multi_data.init_allocation();
-    long long no_update1 = 0;
-    long long no_update2 = 0;
-    long long no_update_max1 = atoi(argv[4]);
-    long long no_update_max2 = atoi(argv[5]);
-    cout << "time: " << time_limit << endl;
-    cout << "parameter: " << no_update_max1 << " " << no_update_max2 << endl;
+
     // long long mode = multi_data.objective_order();
     long long mode = 1;
 
@@ -141,47 +150,34 @@ int main(int argc, char** argv) {
         if (util::getSeconds(start_time) > time_limit) break;
     }
 
-    double best_1_1 = DUMMY_MIN_INT;
-    double best_1_2 = DUMMY_MIN_INT;
-    double best_1_5 = DUMMY_MIN_INT;
-    double best_1_10 = DUMMY_MIN_INT;
-    double best_2_1 = DUMMY_MIN_INT;
-    double best_5_1 = DUMMY_MIN_INT;
-    double best_10_1 = DUMMY_MIN_INT;
 
-    cout << "best size: " << multi_data.best_obj_value_vec.size() << endl;
-    for (int i = 0; i < multi_data.best_obj_value_vec.size(); i++){
-        cout << multi_data.best_obj_value_vec[i].obj1 << " " << multi_data.best_obj_value_vec[i].obj2 << " " <<  multi_data.best_obj_value_vec[i].delete_flag << endl;
-        double r1_1 = multi_data.best_obj_value_vec[i].obj1 - multi_data.best_obj_value_vec[i].obj2;
-        double r1_2 = multi_data.best_obj_value_vec[i].obj1 - multi_data.best_obj_value_vec[i].obj2 * 2;
-        double r1_5 = multi_data.best_obj_value_vec[i].obj1 - multi_data.best_obj_value_vec[i].obj2 * 5;
-        double r1_10 = multi_data.best_obj_value_vec[i].obj1 - multi_data.best_obj_value_vec[i].obj2 * 10;
-        double r2_1 = 2 * multi_data.best_obj_value_vec[i].obj1 - multi_data.best_obj_value_vec[i].obj2;
-        double r5_1 = 5 * multi_data.best_obj_value_vec[i].obj1 - multi_data.best_obj_value_vec[i].obj2;
-        double r10_1 = 10 * multi_data.best_obj_value_vec[i].obj1 - multi_data.best_obj_value_vec[i].obj2;
-        if (r1_1 > best_1_1) best_1_1 = r1_1;
-        if (r1_2 > best_1_2) best_1_2 = r1_2;
-        if (r1_5 > best_1_5) best_1_5 = r1_5;
-        if (r1_10 > best_1_10) best_1_10 = r1_10;
-        if (r2_1 > best_2_1) best_2_1 = r2_1;
-        if (r5_1 > best_5_1) best_5_1 = r5_1;
-        if (r10_1 > best_10_1) best_10_1 = r10_1; 
+
+    if (multi_data.unsat_supply <= 0 && multi_data.unsat_demand <= 0) 
+    {
+        cout << "find feasible solution " << endl;
     }
-    cout << "1:1 best: " << best_1_1 << endl;
-    cout << "1:2 best: " << best_1_2 << endl;
-    cout << "1:5 best: " << best_1_5 << endl;
-    cout << "1:10 best: " << best_1_10 << endl;
-    cout << "2:1 best: " << best_2_1 << endl;
-    cout << "5:1 best: " << best_5_1 << endl;
-    cout << "10:1 best: " << best_10_1 << endl;
+    else 
+    {
+        cout << "not find feasible solution " << endl; 
+        cout << "unsat supply: " << multi_data.unsat_supply << endl;
+
+        for (auto supply : multi_data.unsat_supply_vec)
+        {
+            cout << supply << " " << multi_data.supply_value[supply] << " " << multi_data.supply_remain[supply] << endl;
+        }
+    }
+
+    cout << "best solution set size: " << multi_data.best_obj_value_vec.size() << endl;
+    cout << "*****************************" << endl;
+
+    for (int i = 0; i < multi_data.best_obj_value_vec.size(); i++)
+    {
+        cout << - multi_data.best_obj_value_vec[i].obj1 << " " << multi_data.best_obj_value_vec[i].obj2  << endl;
+
+    }
     
-    cout << "time: " << util::getSeconds(start_time) << " limit " << time_limit << endl;
+    // cout << "time: " << util::getSeconds(start_time) << " limit " << time_limit << endl;
     // multi_data.hyper_volume();
-
-    for (auto supply : multi_data.unsat_supply_vec){
-        cout << supply << " " << multi_data.supply_value[supply] << " " << multi_data.supply_remain[supply] << endl;
-    }
-    cout << "unsat supply: " << multi_data.unsat_supply << endl;
 
     return 0;   
 
