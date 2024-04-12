@@ -159,13 +159,13 @@ void MultiObjectiveData::readSampleFile(string filePath) {
     }
     best_unsat_num = unsat_supply + unsat_demand;
 
-    cout << "sum" << demand_sum << " " << supply_sum << " " << demand_sum / supply_sum << endl;
+    // cout << "sum" << demand_sum << " " << supply_sum << " " << demand_sum / supply_sum << endl;
 
 }
 
 void MultiObjectiveData::show_data(){
-    cout << "---------------demand cnt : " << demand_cnt << endl;
-    cout << "---------------supply cnt : " << supply_cnt << endl;
+    cout << "demand cnt : " << demand_cnt << endl;
+    cout << "supply cnt : " << supply_cnt << endl;
 
     for(long long demand = 0; demand < demand_cnt; demand++){
         // cout << demand << " " << demand_value[demand] << "  finish  " << endl;
@@ -203,15 +203,6 @@ void MultiObjectiveData::coonstruct_query(){
         obj1_total_query_supply += supply_value[supply];
     }
 
-    // obj1_supply_flag[1] = 1;
-    // obj1_query_supply.push_back(1);
-    // obj1_total_query_supply += supply_value[1];
-
-    // for (int i = 0; i < 10; i++){
-    //     obj1_supply_flag[i] = 1;
-    //     obj1_query_supply.push_back(i);
-    //     obj1_total_query_supply += supply_value[i];
-    // }
 
     obj1_available_query_supply = obj1_total_query_supply;
     obj1_best_available_query_supply = 0;
@@ -262,14 +253,6 @@ void MultiObjectiveData::init_allocation(){
         }
     }
 
-    // for (long long supply = 0; supply < supply_cnt; supply++){
-    //     for (long long index = 0; index < map_supply2demand[supply].size(); index++){
-    //         long long demand = map_supply2demand[supply][index];
-    //         if (assign_supply2demand[supply][index].allocate_value > 0){
-    //             cout << "s: " << supply << " d: " << demand << " v: " << assign_supply2demand[supply][index].allocate_value <<" all: " << supply_value[supply] << " remain: " << supply_remain[supply] << endl;
-    //         }
-    //     }
-    // }
 
     // init supply which are queried
     long long query_supply_sum = 0;
@@ -284,27 +267,21 @@ void MultiObjectiveData::init_allocation(){
 
     //for (long long demand = 0; demand < demand_cnt; demand++);
     cout << "*****************************" << endl;
-    cout << "Init assignment obj2 value:  " << calcu_objective2_value() << endl;
-    cout << "unsat num : " << unsat_demand + unsat_supply << endl;
-    cout << "unsat demand: " << unsat_demand << endl;
-    for (auto demand : unsat_demand_vec){
-        cout << index2demandID[demand] << " " << demand_value[demand] << " " << demand_remain[demand] << endl;
-    }
-    cout << "unsat supply: " << unsat_supply << endl;
+    // cout << "Init assignment obj2 value:  " << calcu_objective2_value() << endl;
+    // cout << "unsat num : " << unsat_demand + unsat_supply << endl;
+    // cout << "unsat demand: " << unsat_demand << endl;
+    // for (auto demand : unsat_demand_vec){
+    //     cout << index2demandID[demand] << " " << demand_value[demand] << " " << demand_remain[demand] << endl;
+    // }
+    // cout << "unsat supply: " << unsat_supply << endl;
 
     while (unsat_demand > 0)
     {
         do_sat_demand_move_2();
     }
-    cout << "unsat supply: " << unsat_supply << endl;
-    cout << "unsat demand: " << unsat_demand << endl;
+    // cout << "unsat supply: " << unsat_supply << endl;
+    // cout << "unsat demand: " << unsat_demand << endl;
     
-
-    // for (int supply = 0; supply < supply_cnt; supply++){
-    //     for (int index = 0; index < map_supply2demand[supply].size(); index++){
-    //         cout << "coef: " << supply << " " << map_supply2demand[supply][index] << " " << obj2_const_coef[supply][index] << endl;
-    //     }
-    // }
 }
 
 bool MultiObjectiveData::init_solution(){
